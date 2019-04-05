@@ -1,6 +1,6 @@
 {
   "name": "ember-memory-leaks-codemod",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "test": "codemod-cli test",
     "update-docs": "codemod-cli update-docs"
