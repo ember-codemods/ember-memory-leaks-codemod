@@ -9,8 +9,18 @@
   "keywords": [
     "codemod-cli"
   ],
+  "author": "Rajasegar Chandran <rajasegar.c@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rajasegar/ember-memory-leaks-codemod/issues"
+  },
+"homepage": "https://github.com/rajasegar/ember-memory-leaks-codemod#readme",
   "dependencies": {
     "codemod-cli": "^0.2.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajasegar/ember-memory-leaks-codemod.git"
   },
   "devDependencies": {
     "jest": "^24.1.0"
