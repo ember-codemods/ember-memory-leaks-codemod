@@ -2,8 +2,9 @@
   "name": "ember-memory-leaks-codemod",
   "version": "1.0.0",
   "scripts": {
-    "test": "codemod-cli test",
-    "update-docs": "codemod-cli update-docs"
+    "test": "codemod-cli test --coverage",
+    "update-docs": "codemod-cli update-docs",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "bin": "./bin/cli.js",
   "keywords": [
@@ -14,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/rajasegar/ember-memory-leaks-codemod/issues"
   },
-"homepage": "https://github.com/rajasegar/ember-memory-leaks-codemod#readme",
+  "homepage": "https://github.com/rajasegar/ember-memory-leaks-codemod#readme",
   "dependencies": {
     "codemod-cli": "^0.2.10"
   },
@@ -23,6 +24,7 @@
     "url": "git+https://github.com/rajasegar/ember-memory-leaks-codemod.git"
   },
   "devDependencies": {
+    "coveralls": "^3.0.3",
     "jest": "^24.1.0"
   },
   "jest": {
