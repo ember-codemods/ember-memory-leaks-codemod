@@ -53,17 +53,22 @@ module.exports = function transformer(file, api) {
       return p.value ? p.value.type === "ArrayExpression" : p.type === "ArrayExpression";
     });
 
-    // Adding new set expressions for each array expression
-    arrExps.forEach(p => {
+    let objExps = props.filter(p => {
+      return p.value ? p.value.type === "CallExpression" && p.value.callee.object.name === "Object"
+      : p.type === "CallExpression" && p.callee.object.name === "Object";
+    })
+
+    // Adding new assignment expressions for each array expression
+    arrExps.forEach(a => {
 
       let thisExp = j.expressionStatement(
         j.assignmentExpression(
           '=',
           j.memberExpression(
             j.thisExpression(),
-            j.identifier('_data'), 
+            j.identifier(a.key.name), 
             false)
-          ,j.arrayExpression(p.value.elements)));
+          ,a.value));
 
       initFnBody.push(thisExp);
 
@@ -71,6 +76,27 @@ module.exports = function transformer(file, api) {
       props.splice(props.findIndex(p => p.value.type === "ArrayExpression" && !ignoreProps.includes(p.key.name)),1);
 
     });
+
+    // Adding new assignment expressions for each object expression
+    objExps.forEach(o => {
+
+      let thisExp = j.expressionStatement(
+        j.assignmentExpression(
+          '=',
+          j.memberExpression(
+            j.thisExpression(),
+            j.identifier(o.key.name), 
+            false)
+          ,o.value));
+
+      initFnBody.push(thisExp);
+
+      // Removing object expression values from properties
+      props.splice(props.findIndex(p => p.value.type === "CallExpression" && p.value.callee.object.name === "Object"),1);
+
+    });
+
+
 
   });
 

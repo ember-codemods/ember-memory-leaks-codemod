@@ -22,9 +22,10 @@ ember-memory-leaks-codemod <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ```
 
 ## Transforms
+```
+npx ember-memory-leaks-codemod prototype-reference-leaks path/of/files/ or/some**/*glob.js
+```
 
-<!--TRANSFORMS_START-->
-<!--TRANSFORMS_END-->
 
 ## Contributing
 
