@@ -1,4 +1,7 @@
 # callback-leaks
+Callback leaks are memory leaks that occur due to state being caught in a callback function that is never released from memory.
+
+Read more on callback leaks [here](https://github.com/ember-best-practices/memory-leak-examples/blob/master/exercises/exercise-2.md)
 
 
 ## Usage
@@ -14,8 +17,28 @@ ember-memory-leaks-codemod callback-leaks path/of/files/ or/some**/*glob.js
 
 ## Input / Output
 
-<!--FIXTURES_TOC_START-->
-<!--FIXTURES_TOC_END-->
+```js
+export default Ember.Component.extend({
+  didInsertElement() {
+    if (this.get('onScroll')) {
+      window.addEventListener('scroll', (...args) => this.get('onScroll')(...args));
+    }
+  }
+});
+```
 
-<!--FIXTURES_CONTENT_START-->
-<!--FIXTURES_CONTENT_END-->
+
+```js
+export default Ember.Component.extend({
+  didInsertElement() {
+    if (this.get('onScroll')) {
+      this._onScrollHandler = (...args) => this.get('onScroll')(...args);
+      window.addEventListener('scroll', this._onScrollHandler);
+    }
+  },
+
+  willDestroy() {
+    window.removeEventListener('scroll', this._onScrollHandler);
+  }
+});
+```

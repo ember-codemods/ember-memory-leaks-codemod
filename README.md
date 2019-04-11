@@ -8,6 +8,8 @@
 
 A collection of codemod's for fixing memory leaks in Ember applications.
 
+Please refer [here](https://github.com/ember-best-practices/memory-leak-examples) to know more about memory leaks in Ember applications.
+
 ## Usage
 
 To run a specific codemod from this project, you would run the following:
@@ -22,10 +24,16 @@ ember-memory-leaks-codemod <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ```
 
 ## Transforms
-```
+
+### For fixing prototype reference leaks
+```sh
 npx ember-memory-leaks-codemod prototype-reference-leaks path/of/files/ or/some**/*glob.js
 ```
 
+### For fixing callback leaks
+```sh
+npx ember-memory-leaks-codemod callback-leaks path/of/files/ or/some**/*glob.js
+```
 
 ## Contributing
 
