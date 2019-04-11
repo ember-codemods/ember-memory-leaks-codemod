@@ -11,7 +11,10 @@ module.exports = function transformer(file, api) {
     let dec = path.value.declaration;
     let props = dec.arguments[0].properties;
 
-    let entityType = dec.callee.object.type === "Identifier" ? dec.callee.object.name : dec.callee.object.property.name;
+    let entityType = dec.callee.object.type === "Identifier" 
+      ? dec.callee.object.name 
+      : dec.callee.object.property.name;
+
     const destroyHooksTable = {
       'Component': 'willDestroyElement',
       'Service': 'willDestroy'
@@ -31,7 +34,7 @@ module.exports = function transformer(file, api) {
     if(destroyHook) {
       destroyHookBody = destroyHook.value.body.body;
     } else {
-      // We don't have an init() , hence create one
+      // We don't have an willDestory() , hence create one
 
       let superCall = j.expressionStatement(
         j.callExpression(
@@ -40,12 +43,12 @@ module.exports = function transformer(file, api) {
             j.identifier('_super'),false),
           [j.identifier('...arguments')]));
 
-      let initProp = j.property(
+      let willDestroyProp = j.property(
         "init",
         j.identifier(hookName), 
         j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
 
-      props.push(initProp);
+      props.push(willDestroyProp);
       destroyHook = props.filter(destroyFilter)[0];
       destroyHookBody = destroyHook.value.body.body;
     }
