@@ -12,36 +12,42 @@ module.exports = function transformer(file, api) {
     let props = dec.arguments[0].properties;
 
     let entityType = dec.callee.object.type === "Identifier" ? dec.callee.object.name : dec.callee.object.property.name;
-    //console.log(entityType);
-    let destroyHooksTable = {
+    const destroyHooksTable = {
       'Component': 'willDestroyElement',
       'Service': 'willDestroy'
     };
 
-    let destroyHook = destroyHooksTable[entityType];
-    //console.log(destroyHook)
+    let hookName = destroyHooksTable[entityType];
 
     let destroyFilter = p => {
-      return p.value ? p.value.type === "FunctionExpression" && p.key.name === destroyHook
-        : p.type === "FunctionExpression" && p.key.name === destroyHook;
+      return p.value ? p.value.type === "FunctionExpression" && p.key.name === hookName
+        : p.type === "FunctionExpression" && p.key.name === hookName;
     };
 
-    let initFn = props.filter(destroyFilter)[0];
+    let destroyHook = props.filter(destroyFilter)[0];
 
-    //console.log(initFn)
 
-    let initFnBody;
-    if(initFn) {
-      initFnBody = initFn.value.body.body;
+    let destroyHookBody;
+    if(destroyHook) {
+      destroyHookBody = destroyHook.value.body.body;
     } else {
       // We don't have an init() , hence create one
 
-      let superCall = j.expressionStatement(j.callExpression(j.memberExpression(j.thisExpression(),j.identifier('_super'),false),[j.identifier('...arguments')]))
-      let initProp = j.property("init",j.identifier(destroyHook), j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
+      let superCall = j.expressionStatement(
+        j.callExpression(
+          j.memberExpression(
+            j.thisExpression(),
+            j.identifier('_super'),false),
+          [j.identifier('...arguments')]));
+
+      let initProp = j.property(
+        "init",
+        j.identifier(hookName), 
+        j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
 
       props.push(initProp);
-      initFn = props.filter(destroyFilter)[0];
-      initFnBody = initFn.value.body.body;
+      destroyHook = props.filter(destroyFilter)[0];
+      destroyHookBody = destroyHook.value.body.body;
     }
 
     let addedListeners = [];
@@ -53,32 +59,32 @@ module.exports = function transformer(file, api) {
     })
       .forEach(m => {
 
-     // Normalize the handler
-      if(m.value.arguments[1].type !== "MemberExpression") {
-        
-        // Create a member expression
-        
-const capitalizedEventName = eventname => {
-  return eventname
-    .split()
-    .map(s => {
-      return s[0].toUpperCase() + s.slice(1);
-    })
-    .join("");
-};
-        let handlerName = `_on${capitalizedEventName(m.value.arguments[0].value)}Handler`;
-        let mExp = j.memberExpression(j.thisExpression(),j.identifier(handlerName),false);
-        let expSt = j.expressionStatement(j.assignmentExpression(
-          '=',
-          mExp,
-          m.value.arguments[1]
+        // Normalize the handler
+        if(m.value.arguments[1].type !== "MemberExpression") {
+
+          const capitalizedEventName = eventname => {
+            return eventname
+              .split()
+              .map(s => {
+                return s[0].toUpperCase() + s.slice(1);
+              })
+              .join("");
+          };
+          
+          let handlerName = `_on${capitalizedEventName(m.value.arguments[0].value)}Handler`;
+          
+          // Create a member expression
+          let mExp = j.memberExpression(j.thisExpression(),j.identifier(handlerName),false);
+          let expSt = j.expressionStatement(j.assignmentExpression(
+            '=',
+            mExp,
+            m.value.arguments[1]
           ));
-        
-        m.parentPath.parentPath.value.unshift(expSt);
-        m.value.arguments[1] = mExp;
 
-      }
+          m.parentPath.parentPath.value.unshift(expSt);
+          m.value.arguments[1] = mExp;
 
+        }
 
         let listener = {
           el: m.value.callee.object.name,
@@ -87,7 +93,6 @@ const capitalizedEventName = eventname => {
         };
 
         addedListeners.push(listener);
-
 
       });
 
@@ -100,10 +105,6 @@ const capitalizedEventName = eventname => {
     })
       .forEach(m => {
 
-        //console.log(m)
-        //console.log(m.value.callee.object.name);
-        //console.log(m.value.arguments[0].value);
-        
         let listener = {
           el: m.value.callee.object.name,
           event: m.value.arguments[0].value
@@ -111,11 +112,8 @@ const capitalizedEventName = eventname => {
 
         removedListeners.push(listener);
 
-
       });
 
-    //console.log(addedListeners);
-    //console.log(removedListeners);
 
     addedListeners.forEach(a => {
       let idx = removedListeners.findIndex(function(r) {
@@ -125,14 +123,13 @@ const capitalizedEventName = eventname => {
       if(idx < 0) {
         // No removeEventListener
 
-        
         let removeEventListener = j.expressionStatement(
           j.callExpression(
             j.memberExpression(
               j.identifier(a.el),
               j.identifier('removeEventListener'),
               false),[j.literal(a.event), a.handler]));
-        initFnBody.unshift(removeEventListener);
+        destroyHookBody.unshift(removeEventListener);
       }
     });
 
