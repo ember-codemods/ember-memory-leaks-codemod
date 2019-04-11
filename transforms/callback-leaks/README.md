@@ -15,7 +15,7 @@ yarn global add ember-memory-leaks-codemod
 ember-memory-leaks-codemod callback-leaks path/of/files/ or/some**/*glob.js
 ```
 
-## Input / Output
+## Input 
 
 ```js
 export default Ember.Component.extend({
@@ -26,6 +26,8 @@ export default Ember.Component.extend({
   }
 });
 ```
+
+## Output
 
 
 ```js

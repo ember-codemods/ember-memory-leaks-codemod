@@ -15,7 +15,7 @@ yarn global add ember-memory-leaks-codemod
 ember-memory-leaks-codemod prototype-reference-leaks path/of/files/ or/some**/*glob.js
 ```
 
-## Input / Output
+## Input 
 
 ```js
 // app/services/shared-storage.js
@@ -24,6 +24,8 @@ export default Ember.Service.extend({
 });
 
 ```
+
+## Output
 
 ```js
 export default Ember.Service.extend({
