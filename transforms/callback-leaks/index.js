@@ -23,14 +23,13 @@ module.exports = function transformer(file, api) {
     let hookName = destroyHooksTable[entityType];
 
     let destroyFilter = p => {
-      return p.value ? p.value.type === "FunctionExpression" && p.key.name === hookName
-        : p.type === "FunctionExpression" && p.key.name === hookName;
+      return p.value ? p.value.type === "ObjectMethod" && p.key.name === hookName
+        : p.type === "ObjectMethod" && p.key.name === hookName;
     };
 
-    let destroyHook = props.filter(destroyFilter)[0];
 
+    let destroyHook = props.find(destroyFilter);
 
-    
 
     let addedListeners = [];
 
@@ -52,9 +51,9 @@ module.exports = function transformer(file, api) {
               })
               .join("");
           };
-          
+
           let handlerName = `_on${capitalizedEventName(m.value.arguments[0].value)}Handler`;
-          
+
           // Create a member expression
           let mExp = j.memberExpression(j.thisExpression(),j.identifier(handlerName),false);
           let expSt = j.expressionStatement(j.assignmentExpression(
@@ -104,10 +103,19 @@ module.exports = function transformer(file, api) {
 
       if(idx < 0) {
         // No removeEventListener
+        let removeEventListener = j.expressionStatement(
+          j.callExpression(
+            j.memberExpression(
+              j.identifier(a.el),
+              j.identifier('removeEventListener'),
+              false),[j.literal(a.event), a.handler]));
+
 
         let destroyHookBody;
+
         if(destroyHook) {
-          destroyHookBody = destroyHook.value.body.body;
+          destroyHookBody = destroyHook.body.body;
+          destroyHookBody.unshift(removeEventListener);
         } else {
           // We don't have an willDestory() , hence create one
 
@@ -121,21 +129,12 @@ module.exports = function transformer(file, api) {
           let willDestroyProp = j.property(
             "init",
             j.identifier(hookName), 
-            j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
+            j.functionExpression(null,[],j.blockStatement([removeEventListener, superCall]),false,false));
 
           props.push(willDestroyProp);
-          destroyHook = props.filter(destroyFilter)[0];
-          destroyHookBody = destroyHook.value.body.body;
         }
-        let removeEventListener = j.expressionStatement(
-          j.callExpression(
-            j.memberExpression(
-              j.identifier(a.el),
-              j.identifier('removeEventListener'),
-              false),[j.literal(a.event), a.handler]));
 
 
-        destroyHookBody.unshift(removeEventListener);
       }
     });
 
