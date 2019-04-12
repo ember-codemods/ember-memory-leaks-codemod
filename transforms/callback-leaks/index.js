@@ -22,14 +22,9 @@ module.exports = function transformer(file, api) {
 
     let hookName = destroyHooksTable[entityType];
 
-    let destroyFilter = p => {
-      return p.value ? p.value.type === "ObjectMethod" && p.key.name === hookName
-        : p.type === "ObjectMethod" && p.key.name === hookName;
-    };
-
+    let destroyFilter = p => p.type === "ObjectMethod" && p.key.name === hookName; 
 
     let destroyHook = props.find(destroyFilter);
-
 
     let addedListeners = [];
 
@@ -126,11 +121,7 @@ module.exports = function transformer(file, api) {
                 j.identifier('_super'),false),
               [j.identifier('...arguments')]));
 
-          let willDestroyProp = j.property(
-            "init",
-            j.identifier(hookName), 
-            j.functionExpression(null,[],j.blockStatement([removeEventListener, superCall]),false,false));
-
+          let willDestroyProp = j.objectMethod("method", j.identifier(hookName),[],j.blockStatement([removeEventListener, superCall]));
           props.push(willDestroyProp);
         }
 

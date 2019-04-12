@@ -8,7 +8,7 @@ export default Component.extend({
     }
   },
 
-  willDestroyElement: function() {
+  willDestroyElement() {
     window.removeEventListener("scroll", this._onScrollHandler);
     this._super(...arguments);
   }

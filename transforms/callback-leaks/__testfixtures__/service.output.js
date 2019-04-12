@@ -6,7 +6,7 @@ export default Ember.Service.extend({
     }
   },
 
-  willDestroy: function() {
+  willDestroy() {
     window.removeEventListener("scroll", this._onScrollHandler);
     this._super(...arguments);
   }
