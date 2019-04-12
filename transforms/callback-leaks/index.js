@@ -30,28 +30,7 @@ module.exports = function transformer(file, api) {
     let destroyHook = props.filter(destroyFilter)[0];
 
 
-    let destroyHookBody;
-    if(destroyHook) {
-      destroyHookBody = destroyHook.value.body.body;
-    } else {
-      // We don't have an willDestory() , hence create one
-
-      let superCall = j.expressionStatement(
-        j.callExpression(
-          j.memberExpression(
-            j.thisExpression(),
-            j.identifier('_super'),false),
-          [j.identifier('...arguments')]));
-
-      let willDestroyProp = j.property(
-        "init",
-        j.identifier(hookName), 
-        j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
-
-      props.push(willDestroyProp);
-      destroyHook = props.filter(destroyFilter)[0];
-      destroyHookBody = destroyHook.value.body.body;
-    }
+    
 
     let addedListeners = [];
 
@@ -126,12 +105,36 @@ module.exports = function transformer(file, api) {
       if(idx < 0) {
         // No removeEventListener
 
+        let destroyHookBody;
+        if(destroyHook) {
+          destroyHookBody = destroyHook.value.body.body;
+        } else {
+          // We don't have an willDestory() , hence create one
+
+          let superCall = j.expressionStatement(
+            j.callExpression(
+              j.memberExpression(
+                j.thisExpression(),
+                j.identifier('_super'),false),
+              [j.identifier('...arguments')]));
+
+          let willDestroyProp = j.property(
+            "init",
+            j.identifier(hookName), 
+            j.functionExpression(null,[],j.blockStatement([superCall]),false,false));
+
+          props.push(willDestroyProp);
+          destroyHook = props.filter(destroyFilter)[0];
+          destroyHookBody = destroyHook.value.body.body;
+        }
         let removeEventListener = j.expressionStatement(
           j.callExpression(
             j.memberExpression(
               j.identifier(a.el),
               j.identifier('removeEventListener'),
               false),[j.literal(a.event), a.handler]));
+
+
         destroyHookBody.unshift(removeEventListener);
       }
     });
