@@ -69,7 +69,7 @@ module.exports = function transformer(file, api) {
       let initFnBody;
 
       if(initFn) {
-        initFnBody = initFn.value ? initFn.value.body.body : initFn.body.body;
+        initFnBody =  initFn.body.body;
         initFnBody.push(thisExp);
       } else {
         // We don't have an init() , hence create one
@@ -92,7 +92,7 @@ module.exports = function transformer(file, api) {
       let initFnBody;
 
       if(initFn) {
-        initFnBody = initFn.value ? initFn.value.body.body : initFn.body.body;
+        initFnBody =  initFn.body.body;
         initFnBody.push(thisExp);
       } else {
         // We don't have an init() , hence create one
