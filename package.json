@@ -23,15 +23,15 @@
   },
   "homepage": "https://github.com/rajasegar/ember-memory-leaks-codemod#readme",
   "dependencies": {
-    "codemod-cli": "^0.2.10"
+    "codemod-cli": "^0.2.11"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rajasegar/ember-memory-leaks-codemod.git"
   },
   "devDependencies": {
-    "coveralls": "^3.0.3",
-    "jest": "^24.1.0"
+    "coveralls": "^3.0.4",
+    "jest": "^24.8.0"
   },
   "jest": {
     "testEnvironment": "node"
