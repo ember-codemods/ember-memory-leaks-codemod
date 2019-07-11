@@ -19,15 +19,15 @@
   "author": "Rajasegar Chandran <rajasegar.c@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rajasegar/ember-memory-leaks-codemod/issues"
+    "url": "https://github.com/ember-codemods/ember-memory-leaks-codemod/issues"
   },
-  "homepage": "https://github.com/rajasegar/ember-memory-leaks-codemod#readme",
+  "homepage": "https://github.com/ember-codemods/ember-memory-leaks-codemod#readme",
   "dependencies": {
     "codemod-cli": "^0.2.11"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rajasegar/ember-memory-leaks-codemod.git"
+    "url": "git+https://github.com/ember-codemods/ember-memory-leaks-codemod.git"
   },
   "devDependencies": {
     "coveralls": "^3.0.4",
