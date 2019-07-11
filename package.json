@@ -16,7 +16,7 @@
     "memory-leaks",
     "ember"
   ],
-  "author": "",
+  "author": "Rajasegar Chandran <rajasegar.c@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ember-codemods/ember-memory-leaks-codemod/issues"
